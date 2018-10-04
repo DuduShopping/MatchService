@@ -1,0 +1,9 @@
+DROP TABLE ShoppingRequests
+CREATE TABLE ShoppingRequests(
+  ShoppingRequestId BIGINT PRIMARY KEY IDENTITY,
+  ShoppingOfferAccepted BIGINT NULL,
+  UserId BIGINT NOT NULL,
+  Text VARCHAR(300) NOT NULL DEFAULT '',
+  CreatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
+  State CHAR(5) NOT NULL DEFAULT '',
+)

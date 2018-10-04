@@ -1,0 +1,16 @@
+DROP TABLE ShoppingOrders
+CREATE TABLE ShoppingOrders(
+  UserId BIGINT NOT NULL,
+  OrderId BIGINT PRIMARY KEY IDENTITY,
+  RequestId BIGINT NOT NULL REFERENCES ShoppingRequests(ShoppingRequestId),
+  RequestText VARCHAR(200) NOT NULL DEFAULT '',
+  RequestCreatedAt DATETIME NOT NULL,
+  OfferId BIGINT NOT NULL REFERENCES ShoppingOffers(ShoppingOfferId),
+  OfferText VARCHAR(300) NOT NULL DEFAULT '',
+  OfferPrice BIGINT NOT NULL,
+  OfferCreatedAt DATETIME NOT NULL,
+  CreatedAt DATETIME NOT NULL DEFAULT SYSDATETIME(),
+  OrderState VARCHAR(5) NOT NULL,
+  ShipmentTrackingNumber VARCHAR(30) NULL,
+  CONSTRAINT SHOPPING_ORDERS_REQUEST_OFFER_ID UNIQUE (RequestId, OfferId)
+)

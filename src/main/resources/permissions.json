@@ -1,0 +1,28 @@
+{
+  "ApiEndpoints": [
+    {
+      "ApiEndpointId": 1,
+      "Method": "POST",
+      "Endpoint": "/payment/stripe/charge/oneTime"
+    },
+    {
+      "ApiEndpointId": 2,
+      "Method": "POST",
+      "Endpoint": "/payment/stripe/charge/remembered"
+    },{
+      "ApiEndpointId": 3,
+      "Method": "GET",
+      "Endpoint": "/payment/stripe/source"
+    },{
+      "ApiEndpointId": 4,
+      "Method": "GET",
+      "Endpoint": "/payment/stripe/charge"
+    }
+  ],
+  "Scopes": [
+    {
+      "ScopeName": "Customer",
+      "ApiEndpointIds": [1,2,3,4]
+    }
+  ]
+}
