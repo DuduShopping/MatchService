@@ -3,26 +3,48 @@
     {
       "ApiEndpointId": 1,
       "Method": "POST",
-      "Endpoint": "/payment/stripe/charge/oneTime"
+      "Endpoint": "/shoppingOffer"
     },
     {
       "ApiEndpointId": 2,
-      "Method": "POST",
-      "Endpoint": "/payment/stripe/charge/remembered"
-    },{
+      "Method": "GET",
+      "Endpoint": "/shoppingOffer"
+    },
+    {
       "ApiEndpointId": 3,
-      "Method": "GET",
-      "Endpoint": "/payment/stripe/source"
-    },{
+      "Method": "PUT",
+      "Endpoint": "/shoppingOffer"
+    },
+    {
       "ApiEndpointId": 4,
+      "Method": "POST",
+      "Endpoint": "/shoppingOrder"
+    },
+    {
+      "ApiEndpointId": 5,
       "Method": "GET",
-      "Endpoint": "/payment/stripe/charge"
+      "Endpoint": "/shoppingOrder"
+    },
+    {
+      "ApiEndpointId": 6,
+      "Method": "POST",
+      "Endpoint": "/shoppingRequest"
+    },
+    {
+      "ApiEndpointId": 7,
+      "Method": "GET",
+      "Endpoint": "/shoppingRequest"
+    },
+    {
+      "ApiEndpointId": 8,
+      "Method": "PUT",
+      "Endpoint": "/shoppingRequest"
     }
   ],
   "Scopes": [
     {
       "ScopeName": "Customer",
-      "ApiEndpointIds": [1,2,3,4]
+      "ApiEndpointIds": [1,2,3,4,5,6,7,8]
     }
   ]
 }

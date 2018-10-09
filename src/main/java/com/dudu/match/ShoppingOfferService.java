@@ -2,6 +2,7 @@ package com.dudu.match;
 
 import com.dudu.database.DatabaseHelper;
 import com.dudu.database.DatabaseResult;
+import com.dudu.database.DatabaseRow;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -9,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ShoppingOfferService {
@@ -47,6 +50,54 @@ public class ShoppingOfferService {
 
                     return shoppingOffer;
                 }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param userId
+     * @param shoppingOfferId   ignored on <= 0
+     * @param shoppingRequestId ignored on <= 0
+     * @param states
+     * @return
+     * @throws SQLException
+     */
+    public List<ShoppingOffer> searchOffers(long userId, long shoppingOfferId, long shoppingRequestId, List<String> states) throws SQLException {
+        try (Connection con = source.getConnection()) {
+            StringBuilder query = new StringBuilder("SELECT * FROM ShoppingOffers WHERE UserId = ? ");
+            List<Object> params = new ArrayList<>();
+            params.add(userId);
+
+            if (shoppingOfferId > 0) {
+                query.append(" AND ShoppingOfferId = ? ");
+                params.add(shoppingOfferId);
+            }
+
+            if (shoppingRequestId > 0) {
+                query.append(" AND ShoppingRequestId = ? ");
+                params.add(shoppingRequestId);
+            }
+
+            if (states != null && states.size() > 0) {
+                query.append(" AND State IN (");
+                for (int i = 0; i < states.size(); i++) {
+                    query.append(i == 0 ? "?" : ",?");
+                    params.add(states.get(i));
+                }
+                query.append(") ");
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(query.toString())) {
+                for (int i = 1; i <= states.size(); i++) {
+                    ps.setObject(i, params.get(i-1));
+                }
+
+                DatabaseResult databaseRows = databaseHelper.query(ps);
+                List<ShoppingOffer> shoppingOffers = new ArrayList<>();
+                for (DatabaseRow row : databaseRows)
+                    shoppingOffers.add(ShoppingOffer.from(row));
+                return shoppingOffers;
             }
         }
     }

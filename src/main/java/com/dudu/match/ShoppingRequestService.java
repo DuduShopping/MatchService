@@ -2,6 +2,7 @@ package com.dudu.match;
 
 import com.dudu.database.DatabaseHelper;
 import com.dudu.database.DatabaseResult;
+import com.dudu.database.DatabaseRow;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -9,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ShoppingRequestService {
@@ -82,6 +85,45 @@ public class ShoppingRequestService {
                 return null;
 
             return ShoppingRequest.from(databaseResult.get(0));
+        }
+    }
+
+    /**
+     *
+     * @param userId
+     * @param requestId ignore on <= 0
+     * @param states
+     * @return
+     * @throws SQLException
+     */
+    public List<ShoppingRequest> searchRequests(long userId, long requestId, List<String> states) throws SQLException {
+        try (Connection con = source.getConnection()) {
+            StringBuilder query = new StringBuilder("SELECT * FROM ShoppingRequests WHERE UserId = ? ");
+            List<Object> parameters = new ArrayList<>();
+            parameters.add(userId);
+
+            if (requestId > 0) {
+                query.append(" AND ShoppingRequestId = ? ");
+                parameters.add(requestId);
+            }
+
+            if (states != null && states.size() > 0) {
+                query.append(" AND State IN (");
+                for (int i = 0; i < states.size(); i++)
+                    query.append(i == 0 ? "?" : ",?");
+                query.append(")");
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(query.toString())) {
+                for (int i = 1; i < parameters.size(); i++)
+                    ps.setObject(i, parameters.get(i));
+
+                DatabaseResult result = databaseHelper.query(ps);
+                List<ShoppingRequest> shoppingRequests = new ArrayList<>();
+                for (DatabaseRow row : result)
+                    shoppingRequests.add(ShoppingRequest.from(row));
+                return shoppingRequests;
+            }
         }
     }
 

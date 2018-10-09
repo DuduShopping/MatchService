@@ -3,9 +3,9 @@ package com.dudu.oauth;
 import java.util.Date;
 
 public class User {
-    public long userId;
-    public Date expiredAt;
-    public Date issuedAt;
+    private long userId;
+    private Date expiredAt;
+    private Date issuedAt;
 
     public Date getExpiredAt() {
         return expiredAt;

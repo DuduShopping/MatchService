@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ShoppingOrderService {
@@ -60,5 +63,47 @@ public class ShoppingOrderService {
         }
     }
 
+    public List<ShoppingOrder> searchOrders(long userId, long shoppingOrderId, long shoppingRequestId, long shoppingOfferId, List<String> states) throws SQLException{
+        try (Connection con = source.getConnection()) {
+            StringBuilder query = new StringBuilder("SELECT * FROM ShoppingOrders WHERE UserId = ? ");
+            List<Object> params = new ArrayList<>();
+            params.add(userId);
+
+            if (shoppingOrderId > 0) {
+                query.append(" AND ShoppingOrderId = ? ");
+                params.add(shoppingOrderId);
+            }
+
+            if (shoppingRequestId > 0) {
+                query.append(" AND ShoppingRequestId = ? ");
+                params.add(shoppingRequestId);
+            }
+
+            if (shoppingOfferId > 0) {
+                query.append(" AND ShoppingOfferId = ? ");
+                params.add(shoppingOfferId);
+            }
+
+            if (states != null && states.size() != 0) {
+                query.append(" AND State IN (");
+                for (int i = 0; i < states.size(); i++) {
+                    query.append(i == 0 ? "?" : ",?");
+                    params.add(states.get(i));
+                }
+                query.append(") ");
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(query.toString())) {
+                for (int i = 1; i < params.size(); i++)
+                    ps.setObject(i, params.get(i-1));
+                DatabaseResult databaseRows = databaseHelper.query(ps);
+                List<ShoppingOrder> shoppingOrders = new ArrayList<>();
+                for (DatabaseRow row : databaseRows)
+                    shoppingOrders.add(ShoppingOrder.from(row));
+
+                return shoppingOrders;
+            }
+        }
+    }
 
 }
